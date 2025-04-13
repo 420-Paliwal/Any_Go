@@ -10,16 +10,18 @@ module.exports.registerUser = async (req, res, next) => {
         return res.status(400).json({ errors: error.array() })
     }
 
-    const { firstname, lastname, email, password } = req.body
-    const hashedpassword = await userModel.hashpassword(password)
+    const { fullname, email, password } = req.body
+    const hashedpassword = await userModel.hashPassword(password)
 
     const user = await userService.createUser({
-        firstname, lastname, email, 
+        firstname: fullname.firstname,
+        lastname: fullname.lastname,
+        email, 
         password: hashedpassword
      })
 
-     const jwttoken = await userModel.generateAuthToken();
+     const jwttoken = await user.generateAuthToken();
 
-     res.status(201).json({token, user})
+     res.status(201).json({jwttoken, user})
 
 }

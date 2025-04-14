@@ -121,3 +121,152 @@ The request must be sent in JSON format. The following fields are required:
 ---
 
 This documentation provides an overview of the `/user/register` endpoint. Ensure that your client applications adhere to these data requirements and handle responses appropriately.
+
+## 2. User Login Endpoint
+
+### URL
+`/user/login`
+
+### HTTP Method
+`POST`
+
+### Description
+This endpoint authenticates an existing user. It validates the input credentials, compares the provided password with the stored hashed password, and returns a JSON Web Token (JWT) along with user details if successful.
+
+### Request Body
+The request must be in JSON format with the following fields:
+
+| Field      | Type   | Requirements                             | Description                                  |
+|------------|--------|------------------------------------------|----------------------------------------------|
+| `email`    | String | Must be a valid email format             | The user's email address.                    |
+| `password` | String | Minimum length: 6 characters             | The user's password.                         |
+
+#### Example Request Body
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "yourStrongPassword"
+}
+```
+
+### Response
+
+#### Success Response
+- **Status Code:** `200 OK`
+- **Response Body:**
+  ```json
+  {
+    "jwttoken": "jwt_token_here",
+    "user": {
+      "_id": "user_id_here",
+      "fullname": {
+        "firstname": "John",
+        "lastname": "Doe"
+      },
+      "email": "john.doe@example.com"
+      // ...additional user properties...
+    }
+  }
+  ```
+
+#### Error Responses
+
+- **Validation Error**
+  - **Status Code:** `400 Bad Request`
+  - **Response Body:**
+    ```json
+    {
+      "errors": [
+        {
+          "msg": "Invalid Email",
+          "param": "email",
+          "location": "body"
+        },
+        {
+          "msg": "Password must be 6 characters long",
+          "param": "password",
+          "location": "body"
+        }
+      ]
+    }
+    ```
+
+- **Authentication Failure**
+  - **Status Code:** `401 Unauthorized`
+  - **Response Body:**
+    ```json
+    {
+      "message": "Invalid email or password"
+    }
+    ```
+
+- **Internal Server Error**
+  - **Status Code:** `500 Internal Server Error`
+  - **Description:** An error occurred during the login process.
+
+---
+
+## General Notes
+
+- **Password Security:**  
+  Passwords are hashed using bcrypt before being stored in the database.
+
+- **JWT Generation:**  
+  A JWT is generated upon successful registration or login for session management.
+
+- **Input Validation:**  
+  Input data is validated using `express-validator`. All endpoints enforce the required format for each field.
+
+This documentation covers the essential aspects of the `/user/register` and `/user/login` endpoints. Ensure that all client applications adhere to these requirements for a successful integration.
+
+## 3. User Logout Endpoint
+
+### URL
+`/user/logout`
+
+### HTTP Method
+`GET`
+
+### Description
+This endpoint logs out the user by clearing the authentication cookie and blacklisting the token to ensure it cannot be used in subsequent requests.
+
+### Authentication
+Requires a valid JWT token provided in the cookie or the Authorization header.
+
+### Request
+- No request body is required.
+- The JWT token must be sent in the request cookie (`token`) or in the Authorization header.
+
+### Response
+
+#### Success Response
+- **Status Code:** `200 OK`
+- **Response Body:**
+  ```json
+  {
+    "message": "Logout successfully"
+  }
+  ```
+
+#### Error Responses
+
+- **Unauthorized**
+  - **Status Code:** `401 Unauthorized`
+  - **Response Body:**
+    ```json
+    {
+      "message": "Unauthorized"
+    }
+    ```
+    or
+    ```json
+    {
+      "message": "Already Blacklisted"
+    }
+    ```
+
+### Notes
+- The provided token is added to a blacklist (using `blacklistTokenModel`) to prevent its future use.
+- The endpoint clears the `token` cookie from the client.
+
+---

@@ -1,19 +1,43 @@
 import React, { useState } from 'react'
 import caboraImage from '../assets/cabora.png'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import image2 from '../assets/cabora_canva_city.png'
+import { UserDataContext } from '../context/UserContext'
+import axios from 'axios'
+
+
 const UserLogin = () => {
 
   const [userEmail, setUserEmail] = useState('')
   const [userPassword, setUserPassword] = useState('')
-  const [userData, setUserData] = useState({})
+  const {user, setUser} = React.useContext(UserDataContext)
+
+  const navigate = useNavigate()
+  
 
   const  submitHandler = async (e) => {
     e.preventDefault()
-    setUserData({
+
+    const user = {  
       email: userEmail,
       password: userPassword
-}) }
+    }
+
+    // console.log(user)
+
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/login`, user) 
+    
+    // console.log(response.status)     
+    
+    if(response.status === 200){
+      const data = response.data
+      setUser(data.user)
+      localStorage.setItem('token', data.token)
+      navigate('/Home')
+    }
+    setUserEmail('')
+    setUserPassword('')
+  }
   return (
     <div className='h-screen flex flex-col justify-between px-7 py-3'>
           <form onSubmit={(e) => {
@@ -43,7 +67,7 @@ const UserLogin = () => {
               setUserPassword(e.target.value)
             }}
             type="password" required id="userPassword" placeholder='Enter Your Password' className='p-3 my-1 rounded-lg w-[100%] outline-none border-1 border-sky-100' />
-            <Link className='font-bold outline-none w-[100%] flex justify-center bg-black text-white border-1 border-sky-100 p-3 my-3 rounded-xl'>Login</Link>
+            <button className='font-bold outline-none w-[100%] flex justify-center bg-black text-white border-1 border-sky-100 p-3 my-3 rounded-xl'>Login</button>
             <div className="flex items-center justify-between">
               <h3 className='font-bold'>New Here ?</h3>
               <Link to='/UserSignup' className='font-semibold text-sky-500'>Create New Account</Link>

@@ -156,7 +156,7 @@ The request must be in JSON format with the following fields:
 - **Response Body:**
   ```json
   {
-    "jwttoken": "jwt_token_here",
+    "token": "jwt_token_here",
     "user": {
       "_id": "user_id_here",
       "fullname": {
@@ -289,10 +289,10 @@ Registers a new captain. This endpoint validates the standard fields (email, ful
 | `fullname.firstname`      | String  | Minimum length: 3 characters                                         | The captain's first name.                              |
 | `fullname.lastname`       | String  | Required                                                             | The captain's last name.                               |
 | `password`                | String  | Minimum length: 6 characters                                         | The captain's password.                                |
-| `vechile.color`           | String  | Minimum length: 3 characters                                         | The color of the vehicle.                              |
-| `vechile.plate`           | String  | Minimum length: 3 characters                                         | The vehicle's plate number.                            |
-| `vechile.capacity`        | Number  | Must be an integer with a minimum value of 1                         | The capacity of the vehicle.                           |
-| `vechile.vechileType`     | String  | Must be one of: `bike`, `car`, or `auto`                             | The type of the vehicle.                               |
+| `vehicle.color`           | String  | Minimum length: 3 characters                                         | The color of the vehicle.                              |
+| `vehicle.plate`           | String  | Minimum length: 3 characters                                         | The vehicle's plate number.                            |
+| `vehicle.capacity`        | Number  | Must be an integer with a minimum value of 1                         | The capacity of the vehicle.                           |
+| `vehicle.vehicleType`     | String  | Must be one of: `bike`, `car`, or `auto`                             | The type of the vehicle.                               |
 
 **Example Request:**
 ```json
@@ -303,11 +303,11 @@ Registers a new captain. This endpoint validates the standard fields (email, ful
     "lastname": "Smith"
   },
   "password": "securePassword",
-  "vechile": {
+  "vehicle": {
     "color": "Red",
     "plate": "ABC123",
     "capacity": 4,
-    "vechileType": "car"
+    "vehicleType": "car"
   }
 }
 ```
@@ -326,11 +326,11 @@ Registers a new captain. This endpoint validates the standard fields (email, ful
         "lastname": "Smith"
       },
       "email": "captain@example.com",
-      "vechile": {
+      "vehicle": {
         "color": "Red",
         "plate": "ABC123",
         "capacity": 4,
-        "vechileType": "car"
+        "vehicleType": "car"
       }
       // ...additional captain properties...
     }
@@ -362,22 +362,22 @@ Registers a new captain. This endpoint validates the standard fields (email, ful
         },
         {
           "msg": "Color must be at least 3 characters long",
-          "param": "vechile.color",
+          "param": "vehicle.color",
           "location": "body"
         },
         {
           "msg": "Plate must be at least 3 characters long",
-          "param": "vechile.plate",
+          "param": "vehicle.plate",
           "location": "body"
         },
         {
           "msg": "Capacity must be a number",
-          "param": "vechile.capacity",
+          "param": "vehicle.capacity",
           "location": "body"
         },
         {
           "msg": "Invalid vehicle type",
-          "param": "vechile.vechileType",
+          "param": "vehicle.vehicleType",
           "location": "body"
         }
       ]
@@ -428,7 +428,7 @@ Logs in an existing captain by validating the credentials. Upon successful authe
 - **Response Body:**
   ```json
   {
-    "jwttoken": "jwt_token_here",
+    "token": "jwt_token_here",
     "captain": {
       "_id": "captain_id_here",
       "fullname": {
@@ -436,11 +436,11 @@ Logs in an existing captain by validating the credentials. Upon successful authe
         "lastname": "Smith"
       },
       "email": "captain@example.com",
-      "vechile": {
+      "vehicle": {
         "color": "Red",
         "plate": "ABC123",
         "capacity": 4,
-        "vechileType": "car"
+        "vehicleType": "car"
       }
       // ...additional captain properties...
     }

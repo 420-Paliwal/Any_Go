@@ -30,9 +30,9 @@ module.exports.registerUser = async (req, res, next) => {
         password: hashedpassword
      })
 
-     const jwttoken = await user.generateAuthToken();
+     const token = await user.generateAuthToken();
 
-     res.status(201).json({jwttoken, user})
+     res.status(201).json({token, user})
 
 }
 
@@ -52,10 +52,10 @@ module.exports.loginUser = async (req, res, next) => {
     if(!isMartch){
         return res.status(401).json({message : 'Invalid email or password'})
     }
-    const jwttoken = await user.generateAuthToken()
+    const token = await user.generateAuthToken()
 
-    res.cookie('token', jwttoken)
-    res.status(200).json({jwttoken, user})
+    res.cookie('token', token)
+    res.status(200).json({token, user})
 }
 
 module.exports.getUserProfile = async(req,res,next) => {
@@ -63,8 +63,8 @@ module.exports.getUserProfile = async(req,res,next) => {
 }
 
 module.exports.logoutUser = async (req, res, next) => {
-  const token = req.cookies.token || req.headers.authorization?.split(' ')[1] 
-  res.clearCookie('token')
- await blacklistTokenModel.create({token})
- res.status(200).json({message : 'Logout successfully'})
+    res.clearCookie('token')
+  const token = req.cookies.token || req.headers.authorization?.split(' ')[1]
+//   await blacklistTokenModel.create({token})
+  res.status(200).json({message : 'Logout successfully'})
 }

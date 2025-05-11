@@ -2,18 +2,34 @@ import React, { useState } from 'react'
 import caboraImage from '../assets/cabora_captain_image.png'
 import { Link } from 'react-router'
 import image2 from '../assets/cabora_canva_city.png'
-const CaptainLogin = () => {
+import { useNavigate } from 'react-router'
+import { CaptainDataContext } from '../context/CaptainContext'
+import axios from 'axios'
 
+
+const CaptainLogin = () => {
+  const navigate = useNavigate()
   const [captainEmail, setCaptainEmail] = useState('')
   const [captainPassword, setCaptainPassword] = useState('')
-  const [captainData, setCaptainData] = useState({})
+  const { captain, setCaptain } = React.useContext(CaptainDataContext)
 
   const submitHandler = async (e) => {
     e.preventDefault()
-    setCaptainData({
+    const captain = ({
       email: captainEmail,
       password: captainPassword
-    })
+ })
+   console.log(captain)
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/login`, captain)
+    console.log(response)
+    if(response.status === 200) {
+      const data = response.data
+      console.log(data)
+      setCaptain(data.captain)
+      localStorage.setItem('token', data.token)
+      navigate('/captain-home')
+    }
+
   }
   return (
     <div className='h-screen flex flex-col justify-between px-7 py-3'>
@@ -43,7 +59,7 @@ const CaptainLogin = () => {
             setCaptainPassword(e.target.value)
           }}
           type="password" required id="captainPassword" placeholder='Enter Your Password' className='p-3 my-1 rounded-lg w-[100%] outline-none border-1 border-sky-100' />
-        <Link className='font-bold outline-none w-[100%] flex justify-center bg-black text-white border-1 border-sky-100 p-3 my-3 rounded-xl'>Login</Link>
+        <button type="submit" className='font-bold outline-none w-[100%] flex justify-center bg-black text-white border-1 border-sky-100 p-3 my-3 rounded-xl'>Login</button>
         <div className="flex items-center justify-between">
           <h3 className='font-bold'>Join A Fleet ?</h3>
           <Link to='/captainSignup' className='font-semibold text-sky-500'>Register as a Captain</Link>
@@ -53,7 +69,7 @@ const CaptainLogin = () => {
         <img src={image2} className='mix-blend-multiply  w-[100%] opacity-60' alt="" />
       </div>
       <div className="">
-        <Link to='/userLogin' className='font-bold outline-none flex justify-center w-[100%] bg-[#093a49bd] text-white border-1 border-sky-100 p-3 my-3 rounded-xl'>Login as a  User</Link>
+        <Link to='/UserLogin' className='font-bold outline-none flex justify-center w-[100%] bg-[#093a49bd] text-white border-1 border-sky-100 p-3 my-3 rounded-xl'>Login as a  User</Link>
       </div>
     </div>
   )

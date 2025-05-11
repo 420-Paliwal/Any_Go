@@ -8,12 +8,13 @@ module.exports.registerCaptain = async (req, res, next) => {
     const error = validationResult(req);
 
     if (!error.isEmpty()) {
+        // console.log(" token error hai bhai")
         return res.status(400).json({
             error: error.array()
         });
     }
 
-    const { fullname, email, password, vechile } = req.body;
+    const { fullname, email, password, vehicle } = req.body;
 
     const isCaptainAlreadyExist = await captainModel.findOne({ email });
 
@@ -30,10 +31,10 @@ module.exports.registerCaptain = async (req, res, next) => {
         lastname: fullname.lastname,
         email,
         password: hashedPassword,
-        color: vechile.color,
-        plate: vechile.plate,
-        capacity: vechile.capacity,
-        vechileType: vechile.vechileType
+        color: vehicle.color,
+        plate: vehicle.plate,
+        capacity: vehicle.capacity,
+        vehicleType: vehicle.vehicleType
     });
     const token = await captain.generateAuthToken();
     res.status(201).json({token, captain })
@@ -62,9 +63,9 @@ module.exports.loginUser = async (req, res, next) => {
         return res.status(401).json({message : 'Invalid email or password'})
     }
 
-    const jwttoken = await captain.generateAuthToken();
-    res.cookie('token',jwttoken)
-    res.status(200).json({jwttoken, captain})
+    const token = await captain.generateAuthToken();
+    res.cookie('token',token)
+    res.status(200).json({token, captain})
 
 }
 
